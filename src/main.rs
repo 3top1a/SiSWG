@@ -102,10 +102,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 		}
 	}
 
-	// TODO Get title from files h1
-	let title = String::from("Title");
-
 	let markdown = fs::read_to_string(markdown_path)?;
+
+	// Detection
+
+	let mut lines = markdown.lines();
+
+	// Title from h1
+	let first: &str = lines.next().unwrap();
+	let title = match first.starts_with("# ") {
+		true => first.split_at(2).1,
+		false => file_stem.as_ref().clone(),
+	};
+
+	// Get description
+	let second: &str = lines.next().unwrap();
+	let description = match second.starts_with("## ") {
+		true => second.split_at(3).1,
+		false => "Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved" // Description not found
+	};
 
 	let markdown_html = {
 		let mut options = ComrakOptions::default();
@@ -126,13 +141,20 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 	let html = crate::config::HTML.to_string();
 
-	let html = html.replace("{title}", &html_escape::encode_text(&title).as_ref());
+	let html =
+		html.replace("{title}", &html_escape::encode_text(&title).as_ref());
 	// TODO desc
-	let html = html.replace("{description}", &html_escape::encode_text(&title).as_ref());
+	let html = html.replace(
+		"{description}",
+		&html_escape::encode_text(&description).as_ref(),
+	);
 	let html = html.replace("{content}", &markdown_html);
 	let html = html.replace("{style}", crate::config::CSS);
 
-	let minified_html = minify_html::minify(html.as_bytes(), &minify_html::Cfg::spec_compliant());
+	let minified_html = minify_html::minify(
+		html.as_bytes(),
+		&minify_html::Cfg::spec_compliant(),
+	);
 	fs::write(html_path, minified_html)?;
 
 	Ok(())

@@ -1,6 +1,7 @@
 # Sucklessish Static Web Generator
 
 SiSWG is a tool to convert markdown files to HTML for [my website](https://3top1a.github.io/).
+It's built "sucklessly", meaning that the configuration is a rust file that you overwrite and recompile.
 
 ## Help
 
@@ -21,10 +22,6 @@ OPTIONS:
     -h, --help                                       Print help information
     -V, --version                                    Print version information
 ```
-
-## Dependencies
-
-If `#{{` - `}}#` or `#{{{` - `}}}#` is used in the input Markdown file, the [mathjax.js](https://www.mathjax.org/) will be automatically embedded in the output HTML file. `#{{` and `}}#` are `inlineMath` delimiters. `#{{{` and `}}}#` are `displayMath` delimiters. The default **mathjax.js** are using the [tex-mml-chtml](http://docs.mathjax.org/en/latest/web/components/combined.html#tex-mml-chtml) configuration file.
 
 ## License
 

@@ -1,6 +1,6 @@
 [package]
 name = "siswg"
-version = "1.0.0"
+version = "2.0.0"
 authors = ["3top1a <3top1a.official@gmail.com>", "Magic Len <len@magiclen.org>"]
 edition = "2021"
 repository = "https://github.com/3top1a/SiSWG"

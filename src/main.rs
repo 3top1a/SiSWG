@@ -124,52 +124,13 @@ fn main() -> Result<(), Box<dyn Error>> {
 		markdown_to_html(&markdown, &options)
 	};
 
-	/*let mut html_minifier = HTMLMinifier::new();
-
-	html_minifier.digest("<!DOCTYPE html>")?;
-	html_minifier.digest("<html>")?;
-
-	html_minifier.digest("<head>")?;
-	html_minifier.digest("<meta charset=UTF-8>")?;
-	html_minifier.digest("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">")?;
-	html_minifier.digest(format!(
-		"<meta name=\"generator\" content=\"{} {} by magiclen.org\"/>",
-		APP_NAME, CARGO_PKG_VERSION,
-	))?;
-	html_minifier.digest("<title>")?;
-	html_minifier.digest(html_escape::encode_text(&title).as_ref())?;
-	html_minifier.digest("</title>")?;
-
-	html_minifier.digest("<style>")?;
-	html_minifier.digest(crate::config::CSS)?;
-	html_minifier.digest("</style>")?;
-
-	// TODO Mathjax svgs
-	let has_mathjax = markdown_html.contains("#{{");
-	if has_mathjax {
-		html_minifier.digest("<script>")?;
-		html_minifier.digest(crate::config::MATHJAX_CONFIG)?;
-		html_minifier.digest("</script>")?;
-
-		html_minifier.digest("<script>")?;
-		html_minifier
-			.digest(html_escape::encode_script(&crate::config::MATHJAX_SCRIPT).as_ref())?;
-		html_minifier.digest("</script>")?;
-	}
-
-	html_minifier.digest("</head>")?;
-
-	html_minifier.digest("<body>")?;
-
-	html_minifier.digest("<article class=\"markdown-body\">")?;
-	*/
-
 	let html = crate::config::HTML.to_string();
 
 	let html = html.replace("{title}", &html_escape::encode_text(&title).as_ref());
 	// TODO desc
 	let html = html.replace("{description}", &html_escape::encode_text(&title).as_ref());
 	let html = html.replace("{content}", &markdown_html);
+	let html = html.replace("{style}", crate::config::CSS);
 
 	let minified_html = minify_html::minify(html.as_bytes(), &minify_html::Cfg::spec_compliant());
 	fs::write(html_path, minified_html)?;

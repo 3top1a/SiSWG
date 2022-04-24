@@ -25,10 +25,21 @@ blockquote {
 	border-inline-start: 0.20em dashed #e7e8dd;
 }
 
+table {
+	border: 2px solid rgb(77, 70, 70);
+}
+
+tr:nth-child(2n), th {
+  background-color: #403b3b;
+}
+
 code {
-	margin-left: 0;
-	padding-left: 1em;
-	border-left: 0.20em medium #e7e8dd;
+	font-size: 14px;
+	font-family: monospace;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e4e5de;
+	background-color: #444;
 }
 
 @media (prefers-color-scheme: light) {
@@ -52,7 +63,8 @@ code {
 	}
 
 	code {
-		border-left: 0.20em medium #2d2b2b;
+		font-size: 14px;
+		font-family: monospace;
 	}
 }
 

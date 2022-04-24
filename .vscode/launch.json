@@ -59,9 +59,7 @@
 					"kind": "bin"
 				}
 			},
-			"args": ["example.md",
-			"-o example.html",
-			"-f"],
+			"args": [],
 			"cwd": "${workspaceFolder}"
 		}
 	]

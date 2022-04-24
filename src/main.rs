@@ -5,7 +5,6 @@ use std::path::Path;
 use clap::{Arg, Command};
 use terminal_size::terminal_size;
 
-
 use comrak::{markdown_to_html, ComrakOptions};
 
 const APP_NAME: &str = "Markdown to HTML Converter";
@@ -13,6 +12,7 @@ const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const CARGO_PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 mod config;
+mod tests;
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -48,7 +48,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .get_matches();
 
 	// Parse
-	let markdown_path = Path::new(matches.value_of("MARKDOWN_PATH").unwrap().trim());
+	let markdown_path =
+		Path::new(matches.value_of("MARKDOWN_PATH").unwrap().trim());
 	let html_path = Path::new(matches.value_of("HTML_PATH").unwrap().trim());
 
 	let force = matches.is_present("FORCE");
@@ -91,7 +92,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 		if !html_path.is_dir() {
 			return Err(format!(
-				"Output {} is not a directory!", html_path.display()
+				"Output {} is not a directory!",
+				html_path.display()
 			)
 			.into());
 		}
@@ -112,32 +114,19 @@ fn main() -> Result<(), Box<dyn Error>> {
 		x
 	};
 
-	for file in files
-	{
+	for file in files {
 		// If in dir mode, generate output dir
-		let path: std::path::PathBuf = if directory_mode
-		{
-			// Let's assume p(ath) is "./"
-
-			// p is now "/home/guest/markdown/"
-			let path1 = html_path.canonicalize().unwrap();
-
-			// p is now "/home/guest/markdown/file.md"
-			let mut path2 = path1.join(Path::new(file.as_str()));
-
-			// p is now "/home/guest/markdown/file.html"
-			//? Why mutable? Why like this?
-			path2.set_extension("html");
-
-			path2
-		}
-		else
-		{
+		let path: std::path::PathBuf = if directory_mode {
+			html_path
+				.canonicalize()
+				.unwrap()
+				.join(crate::utils::get_file_stem(file.as_str()) + ".html")
+		} else {
 			html_path.to_path_buf()
 		};
 
 		convert_file(Path::new(&file), path.as_path(), force).unwrap();
-	};
+	}
 
 	Ok(())
 }
@@ -149,7 +138,10 @@ fn convert_file(
 ) -> std::result::Result<(), std::io::Error> {
 	if let Ok(metadata) = path.metadata() {
 		if metadata.is_dir() || !force {
-			return Err(std::io::Error::new(std::io::ErrorKind::AlreadyExists, format!("File {} already exists!", path.display())));
+			return Err(std::io::Error::new(
+				std::io::ErrorKind::AlreadyExists,
+				format!("File {} already exists!", path.display()),
+			));
 		}
 	}
 

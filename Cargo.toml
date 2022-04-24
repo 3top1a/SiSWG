@@ -1,13 +1,13 @@
 [package]
-name = "markdown2html-converter"
-version = "1.1.8"
-authors = ["Magic Len <len@magiclen.org>"]
+name = "siswg"
+version = "1.0.0"
+authors = ["3top1a <3top1a.official@gmail.com>", "Magic Len <len@magiclen.org>"]
 edition = "2021"
-repository = "https://github.com/magiclen/markdown2html-converter"
-homepage = "https://magiclen.org/markdown2html-converter"
-keywords = ["markdown", "html", "MathJax", "LaTeX", "highlight"]
+repository = "https://github.com/3top1a/SiSWG"
+homepage = "https://3top1a.github.io/"
+keywords = ["markdown", "html", "MathJax", "LaTeX"]
 categories = ["command-line-utilities"]
-description = "A tool for converting a Markdown file to a single HTML file with built-in CSS and JS."
+description = "A tool to convert markdown files to HTML for my website"
 readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE", "resources/*"]
@@ -19,11 +19,9 @@ panic = "abort"
 
 [dependencies]
 clap = "3.1.6"
-concat-with = "0.2"
 terminal_size = "0.1"
 
-lazy-static-include = "3.1.1"
-html-minifier = "3"
+minify-html = "0.8.0"
 comrak = "0.12.1"
 html-escape = "0.2"
 

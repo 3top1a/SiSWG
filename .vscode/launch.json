@@ -1,0 +1,70 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in library 'siswg'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--lib",
+					"--package=siswg"
+				],
+				"filter": {
+					"name": "siswg",
+					"kind": "lib"
+				}
+			},
+			"args": ["example.md",
+			"-o example.html",
+			"-f"],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'siswg'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=siswg",
+					"--package=siswg"
+				],
+				"filter": {
+					"name": "siswg",
+					"kind": "bin"
+				}
+			},
+			"args": ["example.md",
+			"-o example.html",
+			"-f"],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'siswg'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=siswg",
+					"--package=siswg"
+				],
+				"filter": {
+					"name": "siswg",
+					"kind": "bin"
+				}
+			},
+			"args": ["example.md",
+			"-o example.html",
+			"-f"],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}

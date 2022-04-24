@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
@@ -6,7 +5,6 @@ use std::path::Path;
 use clap::{Arg, Command};
 use terminal_size::terminal_size;
 
-use path_absolutize::Absolutize;
 
 use comrak::{markdown_to_html, ComrakOptions};
 
@@ -15,6 +13,7 @@ const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const CARGO_PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
 mod config;
+mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
 	let matches = Command::new(APP_NAME)
@@ -48,71 +47,122 @@ fn main() -> Result<(), Box<dyn Error>> {
         .after_help("Enjoy it! https://3top1a.github.io/")
         .get_matches();
 
-	let markdown_path = matches.value_of("MARKDOWN_PATH").unwrap();
-	let html_path = matches.value_of("HTML_PATH");
+	// Parse
+	let markdown_path = Path::new(matches.value_of("MARKDOWN_PATH").unwrap().trim());
+	let html_path = Path::new(matches.value_of("HTML_PATH").unwrap().trim());
 
 	let force = matches.is_present("FORCE");
 
-	let markdown_path = Path::new(markdown_path.trim());
+	// Directory mode
+	// Checks if out is a folder
+	let directory_mode = Path::new(markdown_path).is_dir();
 
-	if markdown_path.is_dir() {
-		return Err(format!(
-			"`{}` is a directory!",
-			markdown_path.absolutize()?.to_string_lossy()
-		)
-		.into());
-	}
+	// Get all files in one big list
+	// jesus
+	let files = if markdown_path.is_dir() {
+		let mut x = Vec::new();
 
-	let file_ext = markdown_path
-		.extension()
-		.map(|ext| ext.to_string_lossy())
-		.unwrap_or_else(|| "".into());
+		let paths = fs::read_dir(markdown_path).unwrap();
 
-	if !file_ext.eq_ignore_ascii_case("md")
-		&& !file_ext.eq_ignore_ascii_case("markdown")
-	{
-		return Err(format!(
-			"`{}` is not a Markdown file.",
-			markdown_path.absolutize()?.to_string_lossy()
-		)
-		.into());
-	}
-
-	let file_stem = markdown_path
-		.file_stem()
-		.map(|ext| ext.to_string_lossy())
-		.unwrap_or_else(|| "".into());
-
-	let html_path = match html_path {
-		Some(html_path) => Cow::from(Path::new(html_path.trim())),
-		None => {
-			let folder_path = markdown_path.parent().unwrap();
-
-			Cow::from(folder_path.join(format!("{}.html", file_stem)))
+		for path in paths {
+			if path.as_ref().unwrap().path().is_dir() {
+				continue;
+			}
+			if path
+				.as_ref()
+				.unwrap()
+				.path()
+				.extension()
+				.unwrap_or(std::ffi::OsStr::new(""))
+				!= "md"
+			{
+				continue;
+			}
+			x.push(path.unwrap().path().display().to_string());
 		}
-	};
 
-	if let Ok(metadata) = html_path.metadata() {
-		if metadata.is_dir() || !force {
+		if x.len() == 0 {
 			return Err(format!(
-				"`{}` exists!",
-				html_path.absolutize()?.to_string_lossy()
+				"No files found in {}",
+				markdown_path.display()
 			)
 			.into());
 		}
+
+		if !html_path.is_dir() {
+			return Err(format!(
+				"Output {} is not a directory!", html_path.display()
+			)
+			.into());
+		}
+
+		x
+	} else {
+		let mut x = Vec::new();
+
+		if markdown_path.extension().unwrap() != "md" {
+			return Err(format!(
+				"No files found in {}",
+				markdown_path.display()
+			)
+			.into());
+		}
+
+		x.push(markdown_path.display().to_string());
+		x
+	};
+
+	for file in files
+	{
+		// If in dir mode, generate output dir
+		let path: std::path::PathBuf = if directory_mode
+		{
+			// Let's assume p(ath) is "./"
+
+			// p is now "/home/guest/markdown/"
+			let path1 = html_path.canonicalize().unwrap();
+
+			// p is now "/home/guest/markdown/file.md"
+			let mut path2 = path1.join(Path::new(file.as_str()));
+
+			// p is now "/home/guest/markdown/file.html"
+			//? Why mutable? Why like this?
+			path2.set_extension("html");
+
+			path2
+		}
+		else
+		{
+			html_path.to_path_buf()
+		};
+
+		convert_file(Path::new(&file), path.as_path(), force).unwrap();
+	};
+
+	Ok(())
+}
+
+fn convert_file(
+	markdown_path: &Path,
+	path: &Path,
+	force: bool,
+) -> std::result::Result<(), std::io::Error> {
+	if let Ok(metadata) = path.metadata() {
+		if metadata.is_dir() || !force {
+			return Err(std::io::Error::new(std::io::ErrorKind::AlreadyExists, format!("File {} already exists!", path.display())));
+		}
 	}
 
-	let markdown = fs::read_to_string(markdown_path)?;
+	let markdown = fs::read_to_string(markdown_path);
 
 	// Detection
-
-	let mut lines = markdown.lines();
+	let mut lines = markdown.as_ref().unwrap().lines();
 
 	// Title from h1
 	let first: &str = lines.next().unwrap();
-	let title = match first.starts_with("# ") {
-		true => first.split_at(2).1,
-		false => file_stem.as_ref().clone(),
+	let title: std::string::String = match first.starts_with("# ") {
+		true => first.split_at(2).1.to_string(),
+		false => crate::utils::get_file_stem(&path),
 	};
 
 	// Get description
@@ -136,14 +186,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 		options.extension.tasklist = true;
 		options.render.hardbreaks = true;
 
-		markdown_to_html(&markdown, &options)
+		markdown_to_html(&markdown.as_ref().unwrap(), &options)
 	};
 
 	let html = crate::config::HTML.to_string();
 
 	let html =
 		html.replace("{title}", &html_escape::encode_text(&title).as_ref());
-	// TODO desc
+
 	let html = html.replace(
 		"{description}",
 		&html_escape::encode_text(&description).as_ref(),
@@ -155,7 +205,5 @@ fn main() -> Result<(), Box<dyn Error>> {
 		html.as_bytes(),
 		&minify_html::Cfg::spec_compliant(),
 	);
-	fs::write(html_path, minified_html)?;
-
-	Ok(())
+	fs::write(&path, minified_html)
 }

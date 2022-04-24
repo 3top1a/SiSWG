@@ -20,9 +20,7 @@
 					"kind": "lib"
 				}
 			},
-			"args": ["example.md",
-			"-o example.html",
-			"-f"],
+			"args": [],
 			"cwd": "${workspaceFolder}"
 		},
 		{
@@ -40,9 +38,9 @@
 					"kind": "bin"
 				}
 			},
-			"args": ["example.md",
-			"-o example.html",
-			"-f"],
+			"args": ["./",
+			"-f",
+			"-o ./dist/"],
 			"cwd": "${workspaceFolder}"
 		},
 		{

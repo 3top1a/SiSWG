@@ -1,0 +1,114 @@
+<!doctype html><html lang=en><title>3top1a - Sucklessish Static Web Generator</title><meta content="width=device-width,initial-scale=1.0" name=viewport><style>body {
+	margin: 40px auto;
+	max-width: 40em;
+	line-height: 1.6;
+	font-size: 18px;
+	color: #e7e8dd;
+	background-color: #2d2b2b;
+	font-family: Georgia, 'Times New Roman', Times, serif;
+	padding: 0 10px;
+}
+
+a {
+	color: rgb(217, 209, 155);
+	transition: all 0.2s ease-in-out;
+	text-decoration: dashed underline;
+}
+
+a:hover {
+	color: #e4e5de;
+}
+
+blockquote {
+	margin-left: 0;
+	padding-left: 1em;
+	border-inline-start: 0.20em dashed #e7e8dd;
+}
+
+table {
+	border: 2px solid rgb(77, 70, 70);
+}
+
+tr:nth-child(2n), th {
+  background-color: #403b3b;
+}
+
+code {
+	font-size: 14px;
+	font-family: monospace;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e4e5de;
+	background-color: #444;
+}
+
+@media (prefers-color-scheme: light) {
+	body
+	{
+		background-color: #e7e8dd;
+		color: #2d2b2b;
+	}
+
+	a {
+		color: rgb(76 69 12);
+		transition: all 0.2s ease-in-out;
+	}
+
+	a:hover {
+		color: #363232;
+	}
+
+	blockquote {
+		border-inline-start: 0.20em dashed #2d2b2b;
+	}
+
+	code {
+		font-size: 14px;
+		font-family: monospace;
+	}
+}
+
+h1,
+h2,
+h3 {
+	line-height: 1.2
+}
+
+ul {
+	list-style: none
+}
+
+li {
+	display: block;
+}
+
+footer {
+	border-top-width: 3px;
+	border-top-style: dashed;
+	clear: both;
+	padding-top: 1em;
+}
+
+figure {
+	max-width: 80%;
+	margin: 0;
+}
+
+header {
+	margin-bottom: 0em;
+}</style><link href=logo_s.ico rel=icon sizes=64x64><link href=logo.ico rel=icon sizes=256x256><link href=logo.svg rel=icon><link color=#000000 href=logo.svg rel=mask-icon><meta content="Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved" name=description><meta content=3top1a name=author><meta content="3top1a - Sucklessish Static Web Generator" property=og:title><meta content=logo.svg property=og:image><meta content="Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved" property=og:description><meta content=website property=og:type><meta content="Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved" name=twitter:description><meta content="Sucklessish Static Web Generator" name=twitter:title><body><header><h1>3top1a</h1><i><b>A proficient code monkey</b></i></header><article><h1>Sucklessish Static Web Generator</h1><p>SiSWG is a tool to convert markdown files to HTML for <a href=https://3top1a.github.io/>my website</a>.<br> It's built "sucklessly", meaning that the configuration is a rust file that you overwrite and recompile.<h2>Help</h2><pre><code>EXAMPLES:
+siswg file.md                            # Convert file.md to file.html, titled "file"
+siswg file.md -o /path/to/output.html    # Convert file.md to output.html, titled "output"
+
+USAGE:
+    siswg [OPTIONS] &LTMARKDOWN_PATH>
+
+ARGS:
+    &LTMARKDOWN_PATH>    Specify the path of your Markdown file
+
+OPTIONS:
+    -o, --html-path &LTHTML_PATH>                      Specify the path of your HTML file
+    -f, --force                                      Force to output if the HTML file exists
+    -h, --help                                       Print help information
+    -V, --version                                    Print version information
+</code></pre><h2>License</h2><p><a href=LICENSE>MIT</a></article><footer><h3>Footer</h3><ul><li><a href=contact.html>Contact me</a></ul></footer>

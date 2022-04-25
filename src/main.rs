@@ -145,25 +145,16 @@ fn convert_file(
 		}
 	}
 
+	// Read text
 	let markdown = fs::read_to_string(markdown_path);
 
-	// Detection
-	let mut lines = markdown.as_ref().unwrap().lines();
+	// Metadata
+	let title =
+		crate::utils::get_title_from_text(&markdown.as_ref().unwrap(), path);
+	let description =
+		crate::utils::get_description_from_text(&markdown.as_ref().unwrap());
 
-	// Title from h1
-	let first: &str = lines.next().unwrap();
-	let title: std::string::String = match first.starts_with("# ") {
-		true => first.split_at(2).1.to_string(),
-		false => crate::utils::get_file_stem(&path),
-	};
-
-	// Get description
-	let second: &str = lines.next().unwrap();
-	let description = match second.starts_with("## ") {
-		true => second.split_at(3).1,
-		false => "Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved" // Description not found
-	};
-
+	// Parser options
 	let markdown_html = {
 		let mut options = ComrakOptions::default();
 
@@ -182,7 +173,6 @@ fn convert_file(
 	};
 
 	let html = crate::config::HTML.to_string();
-
 	let html =
 		html.replace("{title}", &html_escape::encode_text(&title).as_ref());
 

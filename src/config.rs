@@ -13,5 +13,5 @@ pub const CSS: &'static str = std::include_str!("style.css");
 //pub const MATHJAX_CONFIG: &'static str = std::include_str!("mathjax-config.js");
 //pub const MATHJAX_SCRIPT: &'static str = std::include_str!("mathjax.min.js");
 
-pub const MATHJAX_CONFIG: &'static str = "";
-pub const MATHJAX_SCRIPT: &'static str = "";
+//pub const MATHJAX_CONFIG: &'static str = "";
+//pub const MATHJAX_SCRIPT: &'static str = "";

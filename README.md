@@ -1,4 +1,6 @@
-# Sucklessish Static Web Generator
+<div align="center">
+# `📜 Sucklessish Static Web Generator`
+</div>
 
 SiSWG is a tool to convert markdown files to HTML for [my website](https://3top1a.github.io/).
 It's built "sucklessly", meaning that the configuration is a rust file that you overwrite and recompile.

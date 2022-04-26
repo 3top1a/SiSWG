@@ -29,14 +29,29 @@ pub fn get_title_from_text<P: AsRef<Path>>(
 pub fn get_description_from_text(input_text: &String) -> String {
 	let mut lines = input_text.lines();
 
-	let second_line = lines.nth(1).unwrap_or("");
+	if lines.clone().count() <= 2
+	{
+		return String::from(
+			"Looks like I forgot to complete this file. Oh well."
+		)
+	}
 
-	let r = if (lines.clone().count() >= 2) && (second_line.starts_with("## ")) {
-		second_line.split_at(3).1.to_owned()
-	} else {
-		String::from("Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved")
+	let first_line = lines.next().unwrap_or("");
+	let sec_line = lines.next().unwrap_or("");
+
+	let res = if first_line.starts_with("## ")
+	{
+		first_line.split_at(3).1.to_owned()
+	}
+	else if sec_line.starts_with("## ")
+	{
+		sec_line.split_at(3).1.to_owned()
+	}
+	else
+	{
+		String::from("Description not found, so here's a secret on how to make the perfect hot cocoa: add vanilla sugar and some salt")
 	};
 
 	// Do some pp
-	r.trim().to_string()
+	res.trim().to_string()
 }

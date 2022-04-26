@@ -1,5 +1,5 @@
 <div align="center">
-# `📜 Sucklessish Static Web Generator`
+    <h1><code>📜 Sucklessish Static Web Generator</code></h1>
 </div>
 
 SiSWG is a tool to convert markdown files to HTML for [my website](https://3top1a.github.io/).

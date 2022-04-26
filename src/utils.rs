@@ -29,9 +29,10 @@ pub fn get_title_from_text<P: AsRef<Path>>(
 pub fn get_description_from_text(input_text: &String) -> String {
 	let mut lines = input_text.lines();
 
-	let r = if lines.size_hint().0 > 1 {
-		let second: &str = lines.next().unwrap();
-		second.split_at(3).1.to_string()
+	let second_line = lines.nth(1).unwrap_or("");
+
+	let r = if (lines.clone().count() >= 2) && (second_line.starts_with("## ")) {
+		second_line.split_at(3).1.to_owned()
 	} else {
 		String::from("Description not found, so here's a recipe for hot cocoa. Put ~2 spoons of cocoa, ½ teaspoon of vanilla  milk into a  saucepan on medium and stir until dissolved")
 	};

@@ -45,4 +45,29 @@ baz";
 			"Example path"
 		);
 	}
+
+	#[test]
+	fn get_description_from_text()
+	{
+		let text = "# Example title
+## Example description
+
+some light text
+";
+
+		assert_eq!(
+			crate::utils::get_description_from_text(
+				&String::from(text),
+			),
+			"Example description"
+		);
+
+
+		assert_ne!(
+			crate::utils::get_description_from_text(
+				&String::from("test text"),
+			),
+			"Example description"
+		);
+	}
 }

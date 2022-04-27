@@ -16,6 +16,8 @@ mod tests;
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
+	println!("--- SiSWG ---");
+
 	let matches = Command::new(APP_NAME)
         .term_width(terminal_size().map(|(width, _)| width.0 as usize).unwrap_or(0))
         .version(CARGO_PKG_VERSION)
@@ -125,9 +127,12 @@ fn main() -> Result<(), Box<dyn Error>> {
 			html_path.to_path_buf()
 		};
 
+		println!("Converting {}", crate::utils::get_file_stem(&path));
+
 		convert_file(Path::new(&file), path.as_path(), force).unwrap();
 	}
 
+	println!("Done converting!");
 	Ok(())
 }
 
@@ -149,10 +154,18 @@ fn convert_file(
 	let markdown = fs::read_to_string(markdown_path);
 
 	// Metadata
-	let title =
-		crate::utils::get_title_from_text(&markdown.as_ref().unwrap(), path);
-	let description =
-		crate::utils::get_description_from_text(&markdown.as_ref().unwrap());
+	let meta = crate::utils::extract_meta_from_toml(
+		markdown_path.with_extension("toml")
+	);
+
+	// Try to use the provided metadata from 'x'.toml
+	let title = meta.title.unwrap_or(crate::utils::get_title_from_text(
+		&markdown.as_ref().unwrap(),
+		path,
+	));
+	let description = meta.description.unwrap_or(
+		crate::utils::get_description_from_text(&markdown.as_ref().unwrap()),
+	);
 
 	// Parser options
 	let markdown_html = {

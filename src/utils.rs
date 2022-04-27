@@ -1,4 +1,6 @@
 use std::path::Path;
+extern crate serde_derive;
+extern crate toml;
 
 pub fn get_file_stem<P: AsRef<Path>>(path: P) -> String {
 	path.as_ref()
@@ -29,29 +31,38 @@ pub fn get_title_from_text<P: AsRef<Path>>(
 pub fn get_description_from_text(input_text: &String) -> String {
 	let mut lines = input_text.lines();
 
-	if lines.clone().count() <= 2
-	{
+	if lines.clone().count() <= 2 {
 		return String::from(
-			"Looks like I forgot to complete this file. Oh well."
-		)
+			"Looks like I forgot to complete this file. Oh well.",
+		);
 	}
 
 	let first_line = lines.next().unwrap_or("");
 	let sec_line = lines.next().unwrap_or("");
 
-	let res = if first_line.starts_with("## ")
-	{
+	let res = if first_line.starts_with("## ") {
 		first_line.split_at(3).1.to_owned()
-	}
-	else if sec_line.starts_with("## ")
-	{
+	} else if sec_line.starts_with("## ") {
 		sec_line.split_at(3).1.to_owned()
-	}
-	else
-	{
+	} else {
 		String::from("Description not found, so here's a secret on how to make the perfect hot cocoa: add vanilla sugar and some salt")
 	};
 
 	// Do some pp
 	res.trim().to_string()
+}
+
+#[derive(serde_derive::Deserialize, PartialEq, Debug)]
+pub struct Metadata {
+	pub title: Option<String>,
+	pub description: Option<String>,
+}
+
+pub fn extract_meta_from_toml<P: AsRef<Path>>(toml_path: P) -> Metadata {
+	//toml::from_str();
+	let toml: String =
+		std::fs::read_to_string(toml_path).unwrap_or("".to_owned());
+	let toml_p: Metadata = toml::from_str(&toml).unwrap();
+
+	toml_p
 }

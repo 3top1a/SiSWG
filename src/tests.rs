@@ -47,8 +47,7 @@ baz";
 	}
 
 	#[test]
-	fn get_description_from_text()
-	{
+	fn get_description_from_text() {
 		let text = "# Example title
 ## Example description
 
@@ -56,18 +55,24 @@ some light text
 ";
 
 		assert_eq!(
-			crate::utils::get_description_from_text(
-				&String::from(text),
-			),
+			crate::utils::get_description_from_text(&String::from(text),),
 			"Example description"
 		);
 
-
 		assert_ne!(
-			crate::utils::get_description_from_text(
-				&String::from("test text"),
-			),
+			crate::utils::get_description_from_text(&String::from("test text"),),
 			"Example description"
+		);
+	}
+
+	#[test]
+	fn toml_test() {
+		assert_eq!(
+			crate::utils::extract_meta_from_toml("example.toml".to_string()),
+			crate::utils::Metadata {
+				title: Some("Example page".to_owned()),
+				description: Some("Example description. Shhhhh!".to_owned()),
+			}
 		);
 	}
 }

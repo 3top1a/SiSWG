@@ -20,8 +20,7 @@ panic = "abort"
 [dependencies]
 clap = "3.1.6"
 terminal_size = "0.1"
-
-minify-html = "0.8.0"
+minify-html = { version = "0.8.0", features = ["js-esbuild"] }
 comrak = "0.12.1"
 html-escape = "0.2"
 toml = "0.5.9"

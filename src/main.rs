@@ -155,7 +155,7 @@ fn convert_file(
 
 	// Metadata
 	let meta = crate::utils::extract_meta_from_toml(
-		markdown_path.with_extension("toml")
+		markdown_path.with_extension("toml"),
 	);
 
 	// Try to use the provided metadata from 'x'.toml
@@ -163,6 +163,11 @@ fn convert_file(
 		&markdown.as_ref().unwrap(),
 		path,
 	));
+	let title: String = if title == "3top1a" {
+		title
+	} else {
+		"3top1a - ".to_owned() + &title
+	};
 	let description = meta.description.unwrap_or(
 		crate::utils::get_description_from_text(&markdown.as_ref().unwrap()),
 	);

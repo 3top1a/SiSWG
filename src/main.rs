@@ -3,7 +3,6 @@ use std::fs;
 use std::path::Path;
 
 use clap::{Arg, Command};
-use terminal_size::terminal_size;
 
 use comrak::{markdown_to_html, ComrakOptions};
 
@@ -19,41 +18,39 @@ fn main() -> Result<(), Box<dyn Error>> {
 	println!("--- SiSWG ---");
 
 	let matches = Command::new(APP_NAME)
-        .term_width(terminal_size().map(|(width, _)| width.0 as usize).unwrap_or(0))
-        .version(CARGO_PKG_VERSION)
-        .author(CARGO_PKG_AUTHORS)
+		.version(CARGO_PKG_VERSION)
+		.author(CARGO_PKG_AUTHORS)
 		.about("A tool to convert markdown files to HTML for my website \n\nExamples:
 		\nsiswg file.md
 		\n	# Convert file.md to file.html, titled \"file\"
 		\nsiswg file.md -o output.html
 		\n	# Convert file.md to output.html, titled \"output\"
 		\n")
-        .arg(Arg::new("MARKDOWN_PATH")
-            .required(true)
-            .help("Specify the path of your Markdown file")
-            .takes_value(true)
-        )
-        .arg(Arg::new("HTML_PATH")
-            .required(false)
-            .long("html-path")
-            .short('o')
-            .help("Specify the path of your HTML file")
-            .takes_value(true)
-            .display_order(2)
-        )
-        .arg(Arg::new("FORCE")
-            .long("force")
-            .short('f')
-            .help("Force to output if the HTML file exists")
-        )
-        .after_help("Enjoy it! https://3top1a.github.io/")
-        .get_matches();
+		.arg(Arg::new("MARKDOWN_PATH")
+			.required(true)
+			.help("Specify the path of your Markdown file")
+			.takes_value(true)
+		)
+		.arg(Arg::new("HTML_PATH")
+			.required(false)
+			.long("html-path")
+			.short('o')
+			.help("Specify the path of your HTML file")
+			.takes_value(true)
+			.display_order(2)
+		)
+		.arg(Arg::new("FORCE")
+			.long("force")
+			.short('f')
+			.help("Force to output if the HTML file exists")
+		)
+		.after_help("Enjoy it! https://3top1a.github.io/")
+		.get_matches();
 
 	// Parse
 	let markdown_path =
 		Path::new(matches.value_of("MARKDOWN_PATH").unwrap().trim());
 	let html_path = Path::new(matches.value_of("HTML_PATH").unwrap().trim());
-
 	let force = matches.is_present("FORCE");
 
 	// Directory mode
@@ -163,10 +160,10 @@ fn convert_file(
 		&markdown.as_ref().unwrap(),
 		path,
 	));
-	let title: String = if title == "3top1a" {
+	let title: String = if title == crate::config::NAME {
 		title
 	} else {
-		"3top1a - ".to_owned() + &title
+		crate::config::NAME.to_owned() + &" - ".to_owned() + &title
 	};
 	let description = meta.description.unwrap_or(
 		crate::utils::get_description_from_text(&markdown.as_ref().unwrap()),

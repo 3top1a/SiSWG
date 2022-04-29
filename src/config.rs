@@ -4,6 +4,8 @@
 
 // HTML template
 
+pub const NAME: &'static str = "3top1a";
+
 pub const HTML: &'static str = std::include_str!("template.html");
 
 // CSS

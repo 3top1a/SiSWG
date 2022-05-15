@@ -129,15 +129,16 @@ fn main() -> Result<(), Box<dyn Error>> {
 	println!("Done converting!");
 
 	// Generate sitemap
-	println!(
-		"{}",
-		crate::utils::generate_txt_sitemap(
+	fs::write(html_path.join(PathBuf::from("sitemap.txt")),
+	crate::utils::generate_txt_sitemap(
 			out_files
 				.iter()
 				.map(|f| diff_paths(f, html_path.canonicalize().unwrap()).unwrap())
-				.collect()
+				.collect(),
+				"http://www.3top1a.github.io/"
 		)
-	);
+	).unwrap();
+
 	println!("Done generating sitemap!");
 
 	Ok(())

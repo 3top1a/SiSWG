@@ -67,9 +67,10 @@ pub fn extract_meta_from_toml<P: AsRef<Path>>(toml_path: P) -> Metadata {
 	toml_p
 }
 
-pub fn generate_txt_sitemap(map: Vec<PathBuf>) -> String {
+// Meant to be compliant with https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap#general-guidelines
+pub fn generate_txt_sitemap(map: Vec<PathBuf>, site_prefix: &str) -> String {
 	map.iter()
-		.map(|f| f.clone().into_os_string().into_string().unwrap())
+		.map(|f| site_prefix.to_owned() + &f.clone().into_os_string().into_string().unwrap())
 		.collect::<Vec<String>>()
 		.join("\n")
 }

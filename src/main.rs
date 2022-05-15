@@ -1,10 +1,10 @@
-use std::error::Error;
 use std::fs;
 use std::path::Path;
+use std::{error::Error, path::PathBuf};
 
 use clap::{Arg, Command};
-
 use comrak::{markdown_to_html, ComrakOptions};
+use pathdiff::diff_paths;
 
 const APP_NAME: &str = "Markdown to HTML Converter";
 const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -113,31 +113,51 @@ fn main() -> Result<(), Box<dyn Error>> {
 		x
 	};
 
-	for file in files {
-		// If in dir mode, generate output dir
-		let path: std::path::PathBuf = if directory_mode {
-			html_path
-				.canonicalize()
-				.unwrap()
-				.join(crate::utils::get_file_stem(file.as_str()) + ".html")
-		} else {
-			html_path.to_path_buf()
-		};
-
-		println!("Converting {}", crate::utils::get_file_stem(&path));
-
-		convert_file(Path::new(&file), path.as_path(), force).unwrap();
-	}
-
+	// Convert files
+	let out_files: Vec<PathBuf> = files
+		.iter()
+		.map(|f| {
+			convert_file(
+				Path::new(f),
+				directory_mode,
+				html_path.to_path_buf(),
+				force,
+			)
+			.unwrap()
+		})
+		.collect();
 	println!("Done converting!");
+
+	// Generate sitemap
+	println!(
+		"{}",
+		crate::utils::generate_txt_sitemap(
+			out_files
+				.iter()
+				.map(|f| diff_paths(f, html_path.canonicalize().unwrap()).unwrap())
+				.collect()
+		)
+	);
+	println!("Done generating sitemap!");
+
 	Ok(())
 }
 
 fn convert_file(
 	markdown_path: &Path,
-	path: &Path,
+	directory_mode: bool,
+	html_path: PathBuf,
 	force: bool,
-) -> std::result::Result<(), std::io::Error> {
+) -> std::result::Result<PathBuf, std::io::Error> {
+	let path: std::path::PathBuf = if directory_mode {
+		html_path
+			.canonicalize()
+			.unwrap()
+			.join(markdown_path.with_extension("html"))
+	} else {
+		html_path.to_path_buf()
+	};
+
 	if let Ok(metadata) = path.metadata() {
 		if metadata.is_dir() || !force {
 			return Err(std::io::Error::new(
@@ -158,7 +178,7 @@ fn convert_file(
 	// Try to use the provided metadata from 'x'.toml
 	let title = meta.title.unwrap_or(crate::utils::get_title_from_text(
 		&markdown.as_ref().unwrap(),
-		path,
+		&path,
 	));
 	let title: String = if title == crate::config::NAME {
 		title
@@ -202,5 +222,7 @@ fn convert_file(
 		html.as_bytes(),
 		&minify_html::Cfg::spec_compliant(),
 	);
-	fs::write(&path, minified_html)
+	fs::write(&path, minified_html).unwrap();
+
+	Ok(path.to_path_buf())
 }

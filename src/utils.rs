@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 extern crate serde_derive;
 extern crate toml;
 
@@ -65,4 +65,11 @@ pub fn extract_meta_from_toml<P: AsRef<Path>>(toml_path: P) -> Metadata {
 	let toml_p: Metadata = toml::from_str(&toml).unwrap();
 
 	toml_p
+}
+
+pub fn generate_txt_sitemap(map: Vec<PathBuf>) -> String {
+	map.iter()
+		.map(|f| f.clone().into_os_string().into_string().unwrap())
+		.collect::<Vec<String>>()
+		.join("\n")
 }

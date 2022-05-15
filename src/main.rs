@@ -135,7 +135,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 				.iter()
 				.map(|f| diff_paths(f, html_path.canonicalize().unwrap()).unwrap())
 				.collect(),
-				"http://www.3top1a.github.io/"
+				"https://www.3top1a.github.io/"
 		)
 	).unwrap();
 

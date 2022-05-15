@@ -151,10 +151,8 @@ fn convert_file(
 	force: bool,
 ) -> std::result::Result<PathBuf, std::io::Error> {
 	let path: std::path::PathBuf = if directory_mode {
-		html_path
-			.canonicalize()
-			.unwrap()
-			.join(markdown_path.with_extension("html"))
+		html_path.canonicalize().unwrap_or(html_path.to_path_buf())
+		.join(PathBuf::from(markdown_path.file_stem().unwrap()).with_extension("html"))
 	} else {
 		html_path.to_path_buf()
 	};
